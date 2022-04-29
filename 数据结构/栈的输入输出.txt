@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define STACK_INIT_SIZE 100 //储存空间初始分配量
+#define STACKINCREMENT 10   //储存空间分配增量
+
+typedef char ElemType;
+typedef struct //顺序栈的存储结构
+{
+    ElemType *base; //栈底指针
+    ElemType *top;  //栈顶指针
+    int stacksize;  //栈当前可用的最大容量
+} sqStack;
+
+//顺序表的初始化
+void InitStack(sqStack *S)
+{
+    //构造一个空栈S
+    S->base = (ElemType *)malloc(STACK_INIT_SIZE * sizeof(ElemType));
+    //分配初始的数组空间
+    if (!S->base)
+        exit(0);
+    S->top = S->base;               // top初始为base,空栈
+    S->stacksize = STACK_INIT_SIZE; // stacksize设置为最大空间容量
+}
+
+//顺序表的入栈
+void Push(sqStack *S, ElemType e)
+{
+    //判断是否栈满
+    if (S->top - S->base >= S->stacksize)
+    { //如果栈满追加空间
+        S->base = (ElemType *)realloc(S->base, STACKINCREMENT * sizeof(ElemType));
+        if (!S->base)
+            exit(0);
+        S->top = S->base + S->stacksize;
+        S->stacksize = S->stacksize + STACKINCREMENT; //当前空间长度为S.stacksize
+    }
+    *(S->top) = e; //将元素e压入栈顶
+    S->top++;      //栈顶指针+1
+}
+
+//顺序表的出栈
+void Pop(sqStack *S, ElemType *e)
+{                          //删除栈顶元素用e返回其值
+    if (S->top == S->base) //栈空
+        return;
+    //--S->top;    //栈顶指针减一
+    // e = *S->top; //将栈顶元素赋值给e
+    *e = *--(S->top);
+}
+
+int Len(sqStack S)
+{
+    return (S.top - S.base);
+}
+
+int main()
+{
+    ElemType c;
+    sqStack S;
+    int len, i, sum = 0;
+    InitStack(&S); //构造一个空栈S
+    printf("输入二进制数,'#'为结束标志:\n");
+    scanf("%c", &c);
+    while (c != '#')
+    {
+        Push(&S, c);
+        scanf("%c", &c);
+    }
+    getchar();//把'\n'从缓冲去去掉
+
+    len = Len(S); //返回栈S的元素个数
+    printf("当前空间容量为%d:\n", len);
+
+    for (i = 0; i < len; i++) //出栈
+    {
+        Pop(&S, &c);
+        sum = sum + (c - 48) * pow(2, i);//pow函数计算2的i次方
+    }
+    printf("转化为十进制为:%d\n", sum);
+
+    return 0;
+}
+/*pow的用法
+#include <stdio.h>
+#include <math.h>
+
+int main()
+{
+    int i, j, p;
+    printf("输入两个数:\n");
+    scanf("%d,%d", &i, &j);
+    p = pow(i, j);
+    printf("%d", p);
+    return 0;
+}
+*/

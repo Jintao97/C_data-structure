@@ -1,0 +1,138 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef char ElemType;
+
+//线索存储标志位
+// Link(0),表示指向左右孩子的指针(有左右孩子)
+// Thread(1),表示指向前驱后继的线索(没有左右孩子，指向前驱和后继)
+typedef enum //运用了枚举类型
+{
+    Link,  //相当于0
+    Thread //相当于1
+} PointerTag;
+
+typedef struct BiThrNode
+{
+    char data;
+    struct BiThrNode *lchild, *rchild;
+    PointerTag ltag;
+    PointerTag rtag;
+} BiThrNOde, *BiThTree;
+
+//全局变量，始终指向刚刚访问过的结点
+BiThTree pre;
+
+//创建一棵二叉树，约定用户遵照前序遍历的方式输入数据
+void CreateThree(BiThTree *T)
+{
+    char c;
+    scanf("%c", &c);
+
+    if (' ' == c)
+    {
+        *T = NULL;
+    }
+    else
+    {
+        *T = (BiThrNOde *)malloc(sizeof(BiThrNOde));
+        (*T)->data = c;
+        (*T)->ltag = Link; //默认是有左右孩子的
+        (*T)->rtag = Link;
+
+        CreateThree(&(*T)->lchild);
+        CreateThree(&(*T)->rchild);
+    }
+}
+
+void visit(char c)
+{
+    printf("%c", c);
+}
+
+//中序遍历线索化
+void InThreading(BiThTree T)
+{
+    //中序遍历 左根右
+    if (T)
+    {
+
+        InThreading(T->lchild); //递归左孩子线索化
+
+        if (!T->lchild) //没有左孩子
+        {
+            T->ltag = Thread;
+            T->lchild = pre; //指向前驱
+        }
+        if (!pre->rchild) //没有右孩子
+        {
+            pre->rtag = Thread;
+            pre->rchild = T;
+        }
+        pre = T;
+        visit(T->data);
+        InThreading(T->rchild); //递归右孩子线索化
+    }
+}
+
+//初始化一个头指针
+void InOrderThree(BiThTree *p, BiThTree T)
+{
+    *p = (BiThrNOde *)malloc(sizeof(BiThrNOde));
+    (*p)->ltag = Link;
+    (*p)->rtag = Thread;
+    (*p)->rchild = *p;
+    if (!T)
+    {
+        (*p)->lchild = *p; //如果数为空则指向它自己
+    }
+    else
+    {
+        (*p)->lchild = T;
+        pre = *p;
+        InThreading(T);
+        pre->rchild = *p;
+        pre->rtag = Thread;
+        (*p)->rchild = pre;
+    }
+}
+
+//中序遍历二叉树，迭代
+void InOrderTraverse(BiThTree T)
+{
+    BiThTree p;
+    p = T->lchild;
+
+    while (p != T)
+    {
+        //一直找左孩子，最后一个为中序序列中排第一的
+        while (p->ltag == Link)
+        {
+            p = p->lchild;
+        }
+        visit(p->data);
+
+        //当结点标志为1时，直接找到后继结点
+        while (p->rtag == Thread && p->rchild != T)
+        {
+            p = p->rchild;
+            visit(p->data);
+        }
+        p = p->rchild; //否则，寻找右子树下的最左下的结点
+    }
+}
+
+int main()
+{
+    BiThTree p, T = NULL;
+    CreateThree(&T);
+    InOrderThree(&p, T);
+
+    InThreading(p); //递归
+                    //   printf("中序遍历二叉树的结果为:\n");
+                    // InOrderTraverse(p);//迭代
+
+    printf("\n");
+
+    return 0;
+}

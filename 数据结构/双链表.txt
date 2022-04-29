@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef int ElemType;
+typedef struct LNode
+{
+    ElemType data;
+    struct LNode *piror;
+    struct LNode *next;
+} LNode, *LinkList;
+
+LinkList Inilist()
+{
+    LinkList p = (LinkList)malloc(sizeof(LNode));
+    if (p == NULL)
+    {
+        free(p);
+        return NULL;
+    }
+    p->piror = NULL;
+    p->next = NULL;
+    return p;
+}
+
+LinkList Eslist(LinkList L)
+{
+    int n;
+    LinkList j;
+    LinkList i = L;
+    printf("请输入想要输入的数量\n");
+    scanf("%d", &n);
+    while (1) //查找尾项
+    {
+
+        if (i->next == NULL)
+        {
+            break;
+        }
+        i = i->next;
+    }
+    for (; n > 0; n--) //输入数值
+    {
+        j = (LinkList)malloc(sizeof(LNode));
+        if (j == NULL)
+        {
+            free(j);
+            return NULL;
+        }
+        printf("请输入一个数\n");
+        scanf("%d", &j->data);
+        i->next = j;
+        j->piror = i;
+        i = j;
+        i->next = NULL;
+    }
+    return L;
+}
+
+LinkList Interlist(LinkList L)
+{
+    int n;
+    LinkList j, i = L;
+    printf("请输入想要插入的位置\n");
+    scanf("%d", &n);
+    do
+    {
+        i = i->next;
+        n--;
+    } while (n > 0);
+    j = (LinkList)malloc(sizeof(LNode));
+    if (j == NULL)
+    {
+        free(j);
+        return NULL;
+    }
+    printf("请输入一个数");
+    scanf("%d", &j->data);
+    if (i->next == NULL)
+    {
+        //没有最后一项，插入时不用往回指了
+        j->next = i->next;
+        j->piror = i;
+        i->next = j;
+    }
+    else
+    {
+        j->next = i->next;
+        j->piror = i;
+        i->next->piror = j;
+        i->next = j;
+    }
+    return L;
+}
+
+LinkList DeteList(LinkList L)
+{
+    int n;
+    LinkList i = L;
+    printf("请输入想要删除的位置\n");
+    scanf("%d", &n);
+    for (; n > 0; n--)
+    {
+        i = i->next;
+    }
+    if (i->next == NULL)
+    {
+        i->piror->next = NULL;
+    }
+    else
+    {
+        i->next->piror = i->piror;
+        i->piror->next = i->next;
+    }
+    free(i);
+    return L;
+}
+
+void Prlist(LinkList L)
+{
+    LinkList i;
+    i = L;
+    do
+    {
+        i = i->next;
+        printf("%d", i->data);
+    } while (i->next != NULL);
+}
+
+int main()
+{
+Xunh:
+    LinkList L;
+    L = Inilist();
+    L = Eslist(L);
+    Prlist(L);
+    L = Interlist(L);
+    Prlist(L);
+    L = DeteList(L);
+    Prlist(L);
+    goto Xunh;
+
+    return 0;
+}

@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef int ElemType;
+typedef struct Node
+{
+    ElemType data;
+    struct Node *next;
+} sqStack;
+
+void InitStack(sqStack *top)
+{
+    top = NULL;
+}
+
+sqStack *Push(sqStack *top, ElemType e)
+{
+    sqStack *p;
+    p = (sqStack *)malloc(sizeof(sqStack));
+    if (top == NULL)
+        exit(0);
+    p->data = e;
+    p->next = top;
+    top = p;
+    return top;
+}
+
+sqStack *Pop(sqStack *top)
+{
+    if (top)
+    {
+        //声明一个新指针指向栈顶结点
+        sqStack *p = top;
+        //更新头指针
+        top = top->next;
+        printf("出栈元素:%d\n", p->data);
+        if (top)
+        {
+            printf("新栈顶元素为:%d\n", top->data);
+        }
+        else
+        {
+            printf("此栈为空栈！\n");
+        }
+        free(p);
+    }
+    else
+    {
+        printf("栈内没有元素!\n");
+        return top;
+    }
+    return top;
+}
+
+int main()
+{
+    sqStack *top;
+    InitStack(top);
+    top = Push(top, 1);
+    top = Push(top, 2);
+    top = Push(top, 3);
+    top = Pop(top);
+    top = Pop(top);
+    top = Pop(top);
+    top = Pop(top);
+
+    return 0;
+}

@@ -1,0 +1,180 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef int ElemType;
+typedef struct QNode
+{
+    ElemType data;
+    struct QNode *next;
+} QNode, *Queue;
+
+typedef struct
+{
+    Queue front, rear; //对头，队尾指针
+} LinkQueue;
+
+LinkQueue *InitQueue()
+{
+    LinkQueue *q = (LinkQueue *)malloc(sizeof(LinkQueue));
+    //两个指针同时指向一个节点
+    q->front = (Queue)malloc(sizeof(QNode));
+    q->rear = q->front;
+    q->front->next = NULL;
+
+    return q;
+}
+
+void InsertQueue(LinkQueue *q, ElemType e)
+{
+    Queue p;
+    p = (Queue)malloc(sizeof(QNode));
+    if (p == NULL)
+        exit(0);
+    p->data = e;
+
+    q->rear->next = p;
+    q->rear = p;
+    p->next = NULL;
+}
+
+ElemType DeletQueue(LinkQueue *q)
+{
+    int e;
+    Queue p;
+    if (q->front == q->rear)
+        return 0;
+    p = q->front->next;
+    q->front->next = p->next;
+
+    if (q->rear == p)
+    {
+        q->front->next = NULL;
+        q->rear = q->front;
+    }
+    e = p->data;
+    free(p);
+    return e;
+}
+
+//队列销毁
+void DestroyQeue(LinkQueue *q)
+{
+    while (q->front)
+    {
+        q->rear = q->front->next;
+        free(q->front);
+        q->front = q->rear;
+    }
+}
+
+void printQueue(LinkQueue *q)
+{
+    QNode *p;
+    p = q->front->next;
+    while (p != NULL)
+    {
+        printf("%3d", p->data);
+        p = p->next;
+    }
+    printf("\n");
+}
+
+int isEpty(LinkQueue *q)
+{
+    if (q->front == q->rear)
+    {
+        printf("\n队空\n");
+        return 1;
+    }
+    return 0;
+}
+
+int main()
+{
+    LinkQueue *q = InitQueue();
+
+    InsertQueue(q, 1);
+    InsertQueue(q, 2);
+    InsertQueue(q, 3);
+    printQueue(q);
+    DeletQueue(q);
+    DeletQueue(q);
+    DeletQueue(q);
+    printQueue(q);
+    DeletQueue(q);
+
+    return 0;
+}
+（2）
+#include <stdio.h>
+#include <malloc.h>
+
+typedef int ElemType;
+typedef struct QNode
+{
+    ElemType data; //用来存放数据元素信息
+    struct QNode *next;
+} LinkQueueNode;
+
+typedef struct LQueue
+{
+    LinkQueueNode *front;
+    LinkQueueNode *rear;
+} LQueue, *LinkQueue; //链队列结构类型
+
+//链队列的初始化
+LinkQueue InitQueue()
+{
+    LinkQueue Q;
+    Q = (LQueue *)malloc(sizeof(LQueue));
+    Q->front = NULL;
+    Q->rear = NULL;
+
+    return Q;
+}
+
+//入队
+void InsertQueue(LinkQueue Q, ElemType e)
+{
+    LinkQueueNode *p;
+    p = (LinkQueueNode *)malloc(sizeof(LinkQueueNode));
+    p->data = e;
+    p->next = NULL;
+    Q->rear->next = p;
+    Q->rear = p;
+}
+
+//出队
+void DeletQueue(LinkQueue Q)
+{
+    LinkQueueNode *p;
+    if (Q->front == Q->rear)
+        return 0;
+    p = Q->front->next;
+    Q->front->next = p->next;
+    if (p == Q->rear)
+    {
+        Q->rear = Q->front;
+    }
+    printf("%d,", p->data);
+    free(p);
+}
+
+//队列销毁
+void DestroyQeue(LinkQueue Q)
+{
+    while (Q->front)
+    {
+        Q->rear = Q->front->next;
+        free(Q->front);
+        Q->front = Q->rear;
+    }
+}
+
+int main()
+{
+    LinkQueue Q;
+    Q = InitQueue();
+    
+    return 0;
+}

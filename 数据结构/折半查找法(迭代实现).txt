@@ -1,0 +1,51 @@
+#include <stdio.h>
+
+int bin_search(int str[], int n, int key)//key为输入要查找的数字
+{
+    int low, high, mid;
+    //low和high分别指向关键字序列的上界和下界，
+    //mid指向序列的中间位置，即mid=(low+high)/2
+
+    low = 0;
+    high = n - 1;
+
+    while (low <= high)
+    {
+        mid = (low + high) / 2;
+        //令mid域key比较
+        if (str[mid] == key)
+        {
+            return mid; //查找成功
+        }
+        if (str[mid] < key)
+        {
+            low = mid + 1; //在后半序中查找
+        }
+        if (str[mid] > key)
+        {
+            high = mid - 1; //在前半序中查找
+        }
+    }
+    return -1; //查找失败
+}
+
+int main()
+{
+    int str[11] = {1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89};
+    int n, addr;
+
+    printf("请输入待查找的关键字:");
+    scanf("%d", &n);
+
+    addr = bin_search(str, 11, n);
+    if (-1 != addr)
+    {
+        printf("查找成功，关键字%d所在的位置是:%d\n", n, addr);
+    }
+    else
+    {
+        printf("查找失败！\n");
+    }
+
+    return 0;
+}

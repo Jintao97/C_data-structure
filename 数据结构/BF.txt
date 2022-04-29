@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+    char str1[] = {"ILoveFishC.com"};
+    char str2[] = {"FishC"};
+    int i = 0;
+    while (str1[i] != '\0')
+    {
+        for (int j = 0; str1[i] == str2[j]; j++, i++)
+        {
+            if (str2[j + 1] == '\0') // str2遍历完成
+            {
+                printf("在第%d之后\n", i - j);
+                return 0;
+            }
+        }
+        i++;
+    }
+    if (str1[i] == '\0')
+    {
+        printf("未在字符串str1中找到与字符串str2相匹配的项！\n");
+    }
+    return 0;
+}

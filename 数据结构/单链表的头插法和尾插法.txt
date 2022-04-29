@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+typedef int ElemType;
+typedef struct LNode
+{
+    ElemType data;
+    struct LNode *next;
+} LinkList;
+LinkList *CreateList_F(LinkList *L, ElemType a[], int n)
+{
+    LinkList *s;
+    int i;
+    L = (LinkList *)malloc(sizeof(LinkList));
+    L->next = NULL; //创捷头结点，其next域置为NULL
+    for (i = 0; i < n; i++)
+    {
+        //循环建立数据结点
+        s = (LinkList *)malloc(sizeof(LinkList)); //生成新结点
+        s->data = a[i];
+        s->next = L->next;
+        L->next = s;
+    }
+    return L;
+}
+
+LinkList *CreateList_R(LinkList *L, ElemType a[], int n)
+{
+    LinkList *s, *r;
+    int i;
+    L = (LinkList *)malloc(sizeof(LinkList));
+    L->next = NULL; //创建头结点，其next域置为NULL
+    r = L;
+
+    for (i = 0; i < n; i++)
+    {
+        //循环建立数据结点
+        s = (LinkList *)malloc(sizeof(LinkList));
+        s->data = a[i];
+        r->next = s;
+        r = s;
+    }
+    r->next = NULL;
+    return L;
+}
+
+void DestroyList(LinkList *L)
+{
+    LinkList *pre = L, *p = L->next; // pre指向*P的前驱节点
+    while (p != NULL)
+    {
+        //扫描单链表
+        free(pre);
+        pre = p; // pre、p同步往后移动一个节点
+        p = pre->next;
+    }
+    free(pre);
+}
+
+void DisplayList(LinkList *L)
+{
+    LinkList *p = L->next;
+
+    while (p != NULL)
+    {
+        printf("%d", p->data);
+        p = p->next;
+    }
+}
+int main()
+{
+    int a[] = {1, 2, 3, 4, 5};
+    LinkList *L;
+    printf("头插法输出为");
+    L = CreateList_F(L, a, sizeof(a) / sizeof(int));
+   // printf("尾插法输出为");
+   //L = CreateList_R(L, a, sizeof(a) / sizeof(int));
+    DisplayList(L);
+    return 0;
+}

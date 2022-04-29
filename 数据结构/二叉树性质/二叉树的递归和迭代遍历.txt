@@ -1,0 +1,279 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define StackMax 100
+
+typedef struct Node
+{
+    char data;
+    struct Node *LChild;
+    struct Node *RChild;
+} BiNode, *BiTree;
+
+typedef struct
+{
+    BiTree data[StackMax];
+    int top;
+} Stack;
+
+BiTree CreateTree();                //建立二叉树
+void InitStack(Stack *S);           //栈的初始化
+int EmptyStack(Stack S);            //栈判空
+int FullStack(Stack S);             //栈判满
+void PushStack(Stack *S, BiTree T); //入栈
+void PopStack(Stack *S, BiTree *T); //出栈
+void GetTop(Stack S, BiTree *T);    //获取栈顶端元素
+void PreoderTree(BiTree T);         //前序遍历
+void Preoder(BiTree T);             //迭代前序遍历
+void InPrintTree(BiTree T);         //中序遍历
+void InOrder(BiTree T);             //迭代中序遍历
+void PostPrintTree(BiTree T);       //后序遍历
+void PostOrder(BiTree T);           //迭代后序遍历
+
+int main()
+{
+    BiTree T;
+    T = CreateTree();
+    printf("递归前序输出：\n");
+    PreoderTree(T);
+    printf("\n迭代前序输出：\n");
+    Preoder(T);
+    printf("\n递归中序输出：\n");
+    InPrintTree(T); //递归中序
+    printf("\n迭代中序输出：\n");
+    InOrder(T); //非递归中序
+    printf("\n递归后序输出：\n");
+    PostPrintTree(T); //递归后序
+    printf("\n迭代后续输出：\n");
+    PostOrder(T); //非递归后序
+    return 0;
+}
+
+//建立二叉树
+BiTree CreateTree()
+{
+    char c;
+    c = getchar();
+    BiTree T;
+    if (' ' == c)
+    {
+        return NULL;
+    }
+    else
+    {
+        T = (BiTree)malloc(sizeof(BiNode));
+        T->data = c;
+        T->LChild = CreateTree();
+        T->RChild = CreateTree();
+    }
+    return T;
+}
+
+//栈的初始化
+void InitStack(Stack *S)
+{
+    S->top = -1;
+}
+
+//栈判空
+int IsEmptyStack(Stack S)
+{
+    if (-1 == S.top)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+//栈判满
+int IsFullStack(Stack S)
+{
+    if (S.top == StackMax - 1)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+//入栈
+void PushStack(Stack *S, BiTree T)
+{
+    if (IsFullStack(*S))
+    {
+        printf("栈满 ");
+        return;
+    }
+    S->top++;
+    S->data[S->top] = T;
+}
+
+//出栈
+void PopStack(Stack *S, BiTree *T)
+{
+    if (IsEmptyStack(*S))
+    {
+        printf("栈满 ");
+        return;
+    }
+    (*T) = S->data[S->top];
+    S->top--;
+}
+
+//获取栈顶端元素
+void GetTop(Stack S, BiTree *T)
+{
+    if (IsEmptyStack(S))
+    {
+        printf("栈满 ");
+        return;
+    }
+    (*T) = S.data[S.top];
+}
+
+//递归前序输出
+void PreoderTree(BiTree T)
+{
+    if (T == NULL)
+    {
+        return;
+    }
+    printf("%c", T->data);
+    PreoderTree(T->LChild);
+    PreoderTree(T->RChild);
+}
+
+//迭代前序输出
+void Preoder(BiTree T)
+{
+    Stack S;
+    InitStack(&S);
+    BiTree tmp;
+    tmp = T;
+    while (tmp != NULL || !IsEmptyStack(S))
+    {
+        if (tmp != NULL)
+        {
+            PushStack(&S, tmp);
+            printf("%c", tmp->data);
+            tmp = tmp->LChild;
+        }
+        else
+        {
+            PopStack(&S, &tmp);
+            tmp = tmp->RChild;
+        }
+    }
+}
+//递归中序输出
+void InPrintTree(BiTree T)
+{
+    if (T == NULL)
+    {
+        return;
+    }
+    InPrintTree(T->LChild);
+    printf("%c", T->data);
+    InPrintTree(T->RChild);
+}
+
+//迭代中序遍历
+void InOrder(BiTree T)
+{
+    Stack S;
+    InitStack(&S);
+    BiTree tmp;
+    tmp = T;
+    while (tmp != NULL || !IsEmptyStack(S))
+    {
+        if (tmp != NULL)
+        {
+            PushStack(&S, tmp);
+            tmp = tmp->LChild;
+        }
+        else
+        {
+            PopStack(&S, &tmp);
+            printf("%c", tmp->data);
+            tmp = tmp->RChild;
+        }
+    }
+}
+
+//递归后序输出
+void PostPrintTree(BiTree T)
+{
+    if (T == NULL)
+    {
+        return;
+    }
+    PostPrintTree(T->LChild);
+    PostPrintTree(T->RChild);
+    printf("%c", T->data);
+}
+
+//迭代后序遍历
+void PostOrder(BiTree T)
+{
+    Stack S;
+    InitStack(&S);
+    BiTree p, q;
+    p = T;
+    q = NULL;
+    while (p != NULL || !IsEmptyStack(S))
+    {
+        if (p != NULL)
+        {
+            PushStack(&S, p);
+            p = p->LChild;
+        }
+        else
+        {
+            GetTop(S, &p);
+            if (p->RChild != NULL && p->RChild != q)
+            {
+                p = p->RChild;
+            }
+            else
+            {
+                printf("%c", p->data);
+                q = p;
+                PopStack(&S, &p);
+                p = NULL;
+            }
+        }
+    }
+}
+
+另一种方法后序遍历二叉树
+/*void PostOrder(BiTree T)
+{
+    BiTree S[15];
+    int top = -1;
+    int f[15]; //记录每个节点访问次数栈
+    BiTree p = T;
+    while (p != NULL || top != -1)
+    {
+        if (p != NULL)
+        { //第一次访问，flag置1，入栈
+            S[++top] = p;
+            f[top] = 1;
+            p = p->LChild;
+        }
+        else
+        { //（p == NULL）
+            if (f[top] == 1)
+            { //第二次访问，flag置2，取栈顶元素但不出栈
+                p = S[top];
+                f[top] = 2;
+                p = p->RChild;
+            }
+            else
+            { //第三次访问，出栈
+                p = S[top--];
+                printf("%d\t", p->data); //出栈时，访问输出
+                p = NULL;                // p置空，以便继续退栈
+            }
+        }
+    }
+}
+
+*/

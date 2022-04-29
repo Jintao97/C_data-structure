@@ -1,0 +1,49 @@
+#include <stdio.h>
+
+int binary_search(int str[], int low, int high, int k)
+{
+    int mid;
+    if (low <= high)
+    {
+        mid = (low + high) / 2;
+        if (str[mid] == k)
+            return mid;
+        else if (str[mid] > k)
+        {
+            return binary_search(str, mid - 1, low, k);
+        }
+        else
+        {
+            return binary_search(str, mid + 1, high, k);
+        }
+    }
+    else
+        return 0;
+}
+
+int main()
+{
+    int str[8] = {1, 2, 3, 4, 5, 8, 13, 21};
+    int n, i, addr;
+
+    printf("数组的为！\n");
+    for (i = 0; i < 8; i++)
+    {
+        printf("%d ", str[i]);
+    }
+    printf("\n");
+    printf("请输入待查找的关键字：");
+    scanf("%d", &n);
+
+    addr = binary_search(str, 0, 7, n);
+    if (-1 != addr)
+    {
+        printf("查找成功，关键字%d所在的位置为%d\n", n, addr + 1);
+    }
+    else
+    {
+        printf("查找失败！\n");
+    }
+
+    return 0;
+}

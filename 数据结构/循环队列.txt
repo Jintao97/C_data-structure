@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define MAXQSIZE 10 //队列可能达到的最大长度
+
+typedef int ElemType;
+
+typedef struct
+{
+    ElemType *base; //存储空间的基地址
+    int front;      //头指针
+    int rear;       //尾指针
+} sqQueue;
+
+//初始化队列
+void InitQueue(sqQueue *q)
+{
+    q->base = (ElemType *)malloc(MAXQSIZE * sizeof(ElemType));
+    if (!q->base)
+        exit(0);
+    q->front = q->rear = 0; //将队列设为空
+}
+
+ElemType QueueEmpty(sqQueue *q)
+{
+    return (q->front == q->rear);
+}
+//入队列
+sqQueue *InsertQueue(sqQueue *q, ElemType e)
+{                                             //插入q为新的队尾元素
+    if ((q->rear + 1) % MAXQSIZE == q->front) //队列已满
+    {
+        printf("队满，进队不成功！\n");
+        return 0;
+    }
+
+    q->base[q->rear] = e;               //新元素插入队尾
+    q->rear = (q->rear + 1) % MAXQSIZE; //队尾指针+1
+}
+
+//出队列
+sqQueue *DeletQueue(sqQueue *q, ElemType e)
+{                            //删除e的队头元素，用e返回
+    if (q->front == q->rear) //队空
+        exit(0);
+    q->front = (q->front + 1) % MAXQSIZE;
+    e = q->base[q->front]; //保存队头元素
+    //队头指针+1
+}
+
+//获取队列的个数
+int Length(sqQueue *q)
+{
+    return (q->rear - q->front + MAXQSIZE) % MAXQSIZE;
+}
+
+int main()
+{
+    sqQueue *q;
+    ElemType e;
+    InitQueue(q);
+    int i = 0;
+    while (i < 4)
+    {
+        printf("%d进队！\n", i + 1);
+        InsertQueue(q, i + 1);
+        i++;
+    }
+
+    while (!QueueEmpty(q))
+    {
+        DeletQueue(q, e);
+        printf("%d出队！\n", e);
+    }
+
+    printf("\n");
+    free(q);
+
+    return 0;
+}
